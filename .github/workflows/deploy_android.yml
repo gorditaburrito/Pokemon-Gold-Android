@@ -1,30 +1,41 @@
+
 name: Build Android
+
 on: [push, pull_request, workflow_dispatch]
+
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1 
-      - name: Setup Ninja 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
+
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
+          distribution: temurin
           java-version: '17'
+
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
-      - name: Build Release apk
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
+      - name: Build Release APK
         run: |
           cd tools/android_project/
+          chmod +x gradlew
           ./gradlew assembleRelease
-          ls app/build/outputs/apk/release/
-      - name: GH Release 🚀
-        # You may pin to the exact commit or the version.
+          ls -lah app/build/outputs/apk/release/
+
+      - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
-           name: AndroidRelease
-           path: tools/android_project/app/build/outputs/apk/release/com.sky.SkyEmu-*-release.apk
-        
- 
+          name: AndroidRelease
+          path: tools/android_project/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14

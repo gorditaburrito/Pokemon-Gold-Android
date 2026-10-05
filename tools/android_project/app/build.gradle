@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         signingConfig signingConfigs.release
-        applicationId = org.retroforge.builder
+        applicationId 'org.retroforge.builder'
         minSdkVersion 24
         targetSdkVersion 33
         versionCode 32

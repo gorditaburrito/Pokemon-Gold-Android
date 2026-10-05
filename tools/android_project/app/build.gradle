@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         signingConfig signingConfigs.release
-        applicationId = 'com.sky.SkyEmu'
+        applicationId = 'com.customgames.pokemongold'
         minSdkVersion 24
         targetSdkVersion 33
         versionCode 32

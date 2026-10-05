@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        if (romFile().isFile() && romFile().length() > 0) {
+        if (romFile().isFile() && romFile().length() > 256 && romExtensionFile().isFile()) {
             launchGame();
         } else {
             new AlertDialog.Builder(this)
@@ -83,7 +83,12 @@ public class MainActivity extends Activity {
         } catch (Exception ignored) { }
         // SkyEmu's existing native loader copies a file URI to externalFilesDir and loads it.
         // A named extension is necessary for emulator format detection.
-        File playable = new File(getExternalFilesDir(null), "retroforge-game" + ext);
+        File externalDir = getExternalFilesDir(null);
+        if (externalDir == null) {
+            Toast.makeText(this, "Game storage unavailable", Toast.LENGTH_LONG).show();
+            finish(); return;
+        }
+        File playable = new File(externalDir, "retroforge-game" + ext);
         try (InputStream in = new java.io.FileInputStream(romFile());
              OutputStream out = new FileOutputStream(playable)) {
             byte[] buf = new byte[65536]; int n;
